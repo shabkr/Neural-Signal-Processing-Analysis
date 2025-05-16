@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from attributedict.collections import AttributeDict
 from numpy.fft import fft, ifft
-from scipy.interpolate import interp1d
 from mne.viz import plot_topomap
 
 def plot_simEEG(*args):
@@ -119,7 +117,6 @@ def topoPlotIndie(eeg, values, title='Topoplot', vlim=(None, None), cmap='RdBu_r
     # title
     plt.title(title)
     plt.show()
-    
     
 def time_to_id(times_arr, time2plot):
     # convert time in ms to time in indices
