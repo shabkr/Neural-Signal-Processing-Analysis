@@ -74,3 +74,5 @@ py -m pip install -r requirements.txt
 **IMPORTANT.** Make sure your environment is active with `source .venv/bin/activate` (Unix/macOS) or `.venv\Scripts\activate` (Windows) before you launch your course notebooks!
 
 The command `python3 -m jupyter notebook` (Unix/macOS) or `py -m jupyter notebook` (Windows) will launch your Jupyter Notebook session, and you can navigate to the exercise you are on. Ideally have both Jupyter Notebook and the Udemy Course open side by side so that you can work alongside the relevant video. Happy learning!
+
+*A small note/caution.* In the current version of the Python Exercises, we read in the data from Cohen's original .mat files. The output in some cases ends up being a complex set of arrays, rather than the format that `mne` would end up using. The caution is that this code works to follow along with the Cohen course, but may not be the exact code you should use when you work with your own data someday. Hopefully in a future version, I can prepare the files to use something that would be handled more naturally by MNE.
