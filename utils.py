@@ -162,3 +162,45 @@ def read_sampleEEGdata(mat_file = "../data/sampleEEGdata.mat"):
     mne_data = mne_data.set_montage(mne.channels.make_dig_montage(dict(zip(channel_names, coords)), coord_frame="head"))
 
     return mne_data
+
+"""
+def read_v1_laminar(mat_file = "../data/v1_laminar.mat"):
+    '''
+    reads v1_laminar.mat file and returns it in an MNE friendly format
+        Parameters:
+            mat_file (str): string path to v1_laminar. Default assumes the file is in the data folder
+        Returns:
+            mne_data (Epoch): the mne.Epoch formatted version of the data
+    '''
+    eeg_data = scipy.io.loadmat(mat_file) #loads the .mat file as a dictionary
+    eeg = eeg_data['EEG'] #access the actual EEG data within the loaded matlab file
+
+    # information from the Matlab array for easy checking
+    n_channels = int(eeg['nbchan'][0])
+    trials = int(eeg['trials'][0])
+    time_points = int(eeg['pnts'][0])
+    sample_rate = int(eeg['srate'][0])
+    xmin = float(eeg['xmin'][0])
+    xmax = eeg['xmax']
+    times = eeg['times']
+    channel_names = [str(item[0]) for item in eeg['chanlocs'][0][0][0]['labels']]
+    channel_x = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Y']]
+    channel_y = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['X']]
+    channel_z = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Z']]
+    coords = [(channel_x[i],channel_y[i],channel_z[i]) for i in range(len(channel_x))]
+    data_array = np.transpose(eeg['data'][0][0], axes = (2,0,1))/1000000 # in matlab, the data was channels, timespoints, trials/epochs, but it  needs to be epochs, channels, times
+
+
+    # Build the MNE version of the EEG data
+    mne_info = mne.create_info(
+        ch_names = channel_names,
+        sfreq = sample_rate,
+        ch_types = "eeg",
+    )    
+
+    mne_data = mne.EpochsArray(info=mne_info,data=data_array, tmin=xmin)
+    mne_data = mne_data.set_montage(mne.channels.make_dig_montage(dict(zip(channel_names, coords)), coord_frame="head"))
+
+    return mne_data
+
+"""
