@@ -144,9 +144,9 @@ def read_sampleEEGdata(mat_file = "../data/sampleEEGdata.mat"):
     xmax = eeg['xmax']
     times = eeg['times']
     channel_names = [str(item[0]) for item in eeg['chanlocs'][0][0][0]['labels']]
-    channel_x = [float(item[0]) for item in eeg['chanlocs'][0][0][0]['X']]
-    channel_y = [float(item[0]) for item in eeg['chanlocs'][0][0][0]['Y']]
-    channel_z = [float(item[0]) for item in eeg['chanlocs'][0][0][0]['Z']]
+    channel_x = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Y']]
+    channel_y = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['X']]
+    channel_z = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Z']]
     coords = [(channel_x[i],channel_y[i],channel_z[i]) for i in range(len(channel_x))]
     data_array = np.transpose(eeg['data'][0][0], axes = (2,0,1)) # in matlab, the data was channels, timespoints, trials/epochs, but it  needs to be epochs, channels, times
 
@@ -159,6 +159,6 @@ def read_sampleEEGdata(mat_file = "../data/sampleEEGdata.mat"):
     )    
 
     mne_data = mne.EpochsArray(info=mne_info,data=data_array, tmin=xmin)
-    mne_data = mne_data.set_montage(mne.channels.make_dig_montage(dict(zip(channel_names, coords))))
+    mne_data = mne_data.set_montage(mne.channels.make_dig_montage(dict(zip(channel_names, coords)), coord_frame="head"))
 
     return mne_data
