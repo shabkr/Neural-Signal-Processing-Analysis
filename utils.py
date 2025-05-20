@@ -144,9 +144,14 @@ def read_sampleEEGdata(mat_file = "../data/sampleEEGdata.mat"):
     xmax = eeg['xmax']
     times = eeg['times']
     channel_names = [str(item[0]) for item in eeg['chanlocs'][0][0][0]['labels']]
-    channel_x = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Y']]
-    channel_y = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['X']]
-    channel_z = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Z']]
+
+    # note, in Matlab X is front back, but in MNE Y is front back
+    # note in MATLAB Y is left right, but in MNE X is left right
+    # note in MATLAB the left/right sign is reversed from MNE
+    channel_x = [-float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Y']] #left right
+    channel_y = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['X']] #front back
+
+    channel_z = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Z']] # up down
     coords = [(channel_x[i],channel_y[i],channel_z[i]) for i in range(len(channel_x))]
     data_array = np.transpose(eeg['data'][0][0], axes = (2,0,1))/1000000 # in matlab, the data was channels, timespoints, trials/epochs, but it  needs to be epochs, channels, times
 
