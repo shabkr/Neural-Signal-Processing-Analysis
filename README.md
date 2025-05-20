@@ -4,7 +4,7 @@ Python Implementation of the Matlab Problem Sets from MX Cohen's Neural Signal P
 
 [The complete course by MX Cohen can be found here.](https://www.udemy.com/course/solved-challenges-ants/) Please, refer to the original course lectures to learn and follow along with these exercises.
 
-Thanks to user [dxganta](https://github.com/dxganta) for creating the original Python Implementation of Sections 1 through 9. User [shabkr](https://github.com/shabkr) is expanding on these original implementations. I've tried to keep everything as similar as possible to the original Matlab scripts, but there may be places were some code is slightly different due to differences in Python and Matlab, or make use of the features of Jupyter notebooks (i.e. embedded Markdown).
+Thanks to user [dxganta](https://github.com/dxganta) for creating the original Python Implementation of Sections 1 through 9. User [shabkr](https://github.com/shabkr) is expanding on these original implementations. There may be places were some code is different due to differences in Python and Matlab, or make use of the features of Jupyter notebooks (i.e. embedded Markdown).
 
 ## Section status
 
