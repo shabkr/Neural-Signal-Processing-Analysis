@@ -30,6 +30,7 @@ The following Python libraries will be required in this course:
 
 - jupyter (for running the jupyter notebooks that contain the exercises)
 
+- attributedict
 - matplotlib (for pyplot)
 - mne
 - numpy
