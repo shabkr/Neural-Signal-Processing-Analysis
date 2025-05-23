@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy
 from numpy.fft import fft, ifft
+import mne
 from mne.viz import plot_topomap
 
 def plot_simEEG(*args):
@@ -121,3 +123,71 @@ def topoPlotIndie(eeg, values, title='Topoplot', vlim=(None, None), cmap='RdBu_r
 def time_to_id(times_arr, time2plot):
     # convert time in ms to time in indices
     return np.argmin(np.abs(times_arr - time2plot))
+
+def read_emptyEEG(mat_file = "../data/emptyEEG.mat",times=None,trials=None):
+    '''
+    reads emptyEEG.mat file and returns it in an MNE friendly format
+        Parameters:
+            mat_file (str): string path to data. Default assumes the file is in the data folder
+            times (int): integer number of timepoints. Default (none), uses the number of times in the data
+            trials (int): integer number of trials. Default (none), uses the number of trials in the data
+        Returns:
+            mne_data (Epoch): the mne.Epoch formatted version of the data
+            lead_field: Whatever the leadfield data is
+    '''
+    eeg_data = scipy.io.loadmat(mat_file) #loads the .mat file as a dictionary
+    eeg = eeg_data['EEG'] #access the actual EEG data within the loaded matlab file
+    lf = eeg_data["lf"] #access the leadfield data within the loaded matlab file
+
+    # information from the Matlab array for easy checking
+    n_channels = int(eeg['nbchan'][0])
+    if trials is None:
+        trials = int(eeg['trials'][0])
+    time_points = int(eeg['pnts'][0])
+    sample_rate = int(eeg['srate'][0])
+    xmin = float(eeg['xmin'][0])
+    xmax = float(eeg['xmax'][0])
+    if times is None:
+        times = eeg['times']
+    channel_names = [str(item[0]) for item in eeg['chanlocs'][0][0][0]['labels']]
+
+    # note, in Matlab X is front back, but in MNE Y is front back
+    # note in MATLAB Y is left right, but in MNE X is left right
+    # note in MATLAB the left/right sign is reversed from MNE
+    channel_x = [-float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Y']] #left right
+    channel_y = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['X']] #front back
+    channel_z = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Z']] # up down
+    coords = [(channel_x[i],channel_y[i],channel_z[i]) for i in range(len(channel_x))]
+    data_array = np.zeros(shape=(trials,n_channels,time_points)) # in matlab, the data was channels, timespoints, trials/epochs, but it  needs to be trials, channels, timepoints
+
+    # Build the MNE version of the EEG data
+    mne_info = mne.create_info(
+        ch_names = channel_names,
+        sfreq = sample_rate,
+        ch_types = "eeg",
+    )    
+
+    mne_data = mne.EpochsArray(info=mne_info,data=data_array, tmin=xmin)
+    mne_data = mne_data.set_montage(mne.channels.make_dig_montage(dict(zip(channel_names, coords)), coord_frame="head"))
+
+    #now, prepare the leadfield data
+    # lf in matlab contains the following
+    # MEGMethod (empty string)
+    # EEGMethod (string)
+    # Gain (64 x 3 x 2004 double) <- forward solution?
+    # Comment (string)
+    # HeadModelType (string)
+    # ***** GridLoc (2004 x 3 double) dipoles by xyz coords
+    # GridOrient (2004 x 3 double)
+    # SurfaceFile
+    # InputSurfaces (empty array)
+    # Param (empty array)
+    # History (1 x 3 cell)
+    lead_field = {"GridLoc": lf["GridLoc"][0][0],
+                  "Gain": lf["Gain"][0][0]}
+
+    coord_order = np.array([1,0,2])   
+    lead_field["GridLoc"] = lead_field["GridLoc"][:,coord_order]/1000
+    lead_field["Gain"] = lead_field["Gain"][:,coord_order,:]
+
+    return mne_data, lead_field
