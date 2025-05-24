@@ -11,7 +11,7 @@ Thanks to user [dxganta](https://github.com/dxganta) for creating the original P
 - [x] Section 1: Introduction
   - *not applicable, no Matlab exercises*
 - [x] Section 2: The basics of neural signal processing
-- [ ] Section 3: Simulating time series signals and noise
+- [x] Section 3: Simulating time series signals and noise
 - [ ] Section 4: Time-domain analyses
 - [ ] Section 5: Static spectral analysis
 - [ ] Section 6: More on static spectral analyses
