@@ -10,8 +10,8 @@ Thanks to user [dxganta](https://github.com/dxganta) for creating the original P
 
 - [x] Section 1: Introduction
   - *not applicable, no Matlab exercises*
-- [ ] Section 2: The basics of neural signal processing
-- [ ] Section 3: Simulating time series signals and noise
+- [x] Section 2: The basics of neural signal processing
+- [x] Section 3: Simulating time series signals and noise
 - [ ] Section 4: Time-domain analyses
 - [ ] Section 5: Static spectral analysis
 - [ ] Section 6: More on static spectral analyses
@@ -30,6 +30,7 @@ The following Python libraries will be required in this course:
 
 - jupyter (for running the jupyter notebooks that contain the exercises)
 
+- attributedict
 - matplotlib (for pyplot)
 - mne
 - numpy
@@ -51,7 +52,7 @@ Clone the repository, or download the zip! Launch your operating system's termin
 
 We'll use python's `venv` tool to build our environment. You can find [thorough virtual environment instructions on the Python Website](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments), but there are also brief instructions below:
 
-- For Unix/macOS systems
+- For Unix/macOS systems *(Note. MacOS users may need to additionally install a package manager such as Brew `https://brew.sh/`)*
 
 ```bash
 cd NEURAL SIGNAL PROCESSING COURSE DIRECTORY #if you aren't there already
@@ -68,6 +69,8 @@ py -m venv .venv
 .venv\Scripts\activate
 py -m pip install -r requirements.txt
 ```
+
+- alternatively, if you have followed the instructions above but it is throwing errors at the `pip -install` stage, try running `python3 -m pip install PACKAGENAME` one at a time for each of the packages. This might help it install without an error.
 
 ### 3. Launch Jupyter and begin learning!
 
