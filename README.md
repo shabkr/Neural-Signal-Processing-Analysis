@@ -70,6 +70,8 @@ py -m venv .venv
 py -m pip install -r requirements.txt
 ```
 
+- alternatively, if you have followed the instructions above but it is throwing errors at the `pip -install` stage, try running `python3 -m pip install PACKAGENAME` one at a time for each of the packages. This might help it install without an error.
+
 ### 3. Launch Jupyter and begin learning!
 
 **IMPORTANT.** Make sure your environment is active with `source .venv/bin/activate` (Unix/macOS) or `.venv\Scripts\activate` (Windows) before you launch your course notebooks!
