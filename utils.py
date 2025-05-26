@@ -1,6 +1,6 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import scipy
+import numpy as np
 from numpy.fft import fft, ifft
 import mne
 from mne.viz import plot_topomap
@@ -81,7 +81,7 @@ def plot_simEEG(*args):
     plt.title('Time-frequency plot')
 
     plt.show()
-    
+      
 def plot_simEEG_mne(*args):
   """
   plot_simEEG - plot function for MXC's course on neural time series analysis
@@ -166,7 +166,6 @@ def plot_simEEG_mne(*args):
 
   plt.show()
 
-
 def topoPlotIndie(eeg, values, title='Topoplot', vlim=(None, None), cmap='RdBu_r', contours=6):
     '''
         eeg = eeg mat file loaded
@@ -196,7 +195,7 @@ def topoPlotIndie(eeg, values, title='Topoplot', vlim=(None, None), cmap='RdBu_r
     eeg_chanlocs = np.array(eeg_chanlocs)
     
     fig, ax = plt.subplots(figsize=(8,8))
-    im, _ = plot_topomap(values, eeg_chanlocs, axes=ax, show=False, 
+    im, _ = mne.viz.plot_topomap(values, eeg_chanlocs, axes=ax, show=False, 
                          cmap=cmap, ch_type='eeg', size = 200,
                         contours=contours, vlim=vlim)
     plt.colorbar(im)
@@ -208,6 +207,50 @@ def topoPlotIndie(eeg, values, title='Topoplot', vlim=(None, None), cmap='RdBu_r
 def time_to_id(times_arr, time2plot):
     # convert time in ms to time in indices
     return np.argmin(np.abs(times_arr - time2plot))
+
+def read_sampleEEGdata(mat_file = "../data/sampleEEGdata.mat"):
+    '''
+    reads sampleEEGdata.mat file and returns it in an MNE friendly format
+        Parameters:
+            mat_file (str): string path to sampleEEGdata. Default assumes the file is in the data folder
+        Returns:
+            mne_data (Epoch): the mne.Epoch formatted version of the data
+    '''
+    eeg_data = scipy.io.loadmat(mat_file) #loads the .mat file as a dictionary
+    eeg = eeg_data['EEG'] #access the actual EEG data within the loaded matlab file
+
+    # information from the Matlab array for easy checking
+    n_channels = int(eeg['nbchan'][0])
+    trials = int(eeg['trials'][0])
+    time_points = int(eeg['pnts'][0])
+    sample_rate = int(eeg['srate'][0])
+    xmin = float(eeg['xmin'][0])
+    xmax = eeg['xmax']
+    times = eeg['times']
+    channel_names = [str(item[0]) for item in eeg['chanlocs'][0][0][0]['labels']]
+
+    # note, in Matlab X is front back, but in MNE Y is front back
+    # note in MATLAB Y is left right, but in MNE X is left right
+    # note in MATLAB the left/right sign is reversed from MNE
+    channel_x = [-float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Y']] #left right
+    channel_y = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['X']] #front back
+
+    channel_z = [float(item[0])/1000 for item in eeg['chanlocs'][0][0][0]['Z']] # up down
+    coords = [(channel_x[i],channel_y[i],channel_z[i]) for i in range(len(channel_x))]
+    data_array = np.transpose(eeg['data'][0][0], axes = (2,0,1))/1000000 # in matlab, the data was channels, timespoints, trials/epochs, but it  needs to be epochs, channels, times
+
+
+    # Build the MNE version of the EEG data
+    mne_info = mne.create_info(
+        ch_names = channel_names,
+        sfreq = sample_rate,
+        ch_types = "eeg",
+    )    
+
+    mne_data = mne.EpochsArray(info=mne_info,data=data_array, tmin=xmin)
+    mne_data = mne_data.set_montage(mne.channels.make_dig_montage(dict(zip(channel_names, coords)), coord_frame="head"))
+
+    return mne_data
 
 def read_emptyEEG(mat_file = "../data/emptyEEG.mat",times=None,trials=None):
     '''
