@@ -52,7 +52,7 @@ Clone the repository, or download the zip! Launch your operating system's termin
 
 We'll use python's `venv` tool to build our environment. You can find [thorough virtual environment instructions on the Python Website](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments), but there are also brief instructions below:
 
-- For Unix/macOS systems
+- For Unix/macOS systems *(Note. MacOS users may need to additionally install a package manager such as Brew `https://brew.sh/`)*
 
 ```bash
 cd NEURAL SIGNAL PROCESSING COURSE DIRECTORY #if you aren't there already
