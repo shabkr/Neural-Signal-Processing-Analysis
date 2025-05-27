@@ -5,9 +5,11 @@ from numpy.fft import fft, ifft
 import mne
 from mne.viz import plot_topomap
 
-def plot_simEEG(*args):
+def plot_simEEG(*args,**kwargs):
     """
     plot_simEEG - plot function for MXC's course on neural time series analysis
+    lims: dictionary of x and y lims for the images. Use the following format
+        {"erp": {"xlim":[xmin,xmax], "ylim":[ymin,ymax]}, "power": {"xlim":[xmin,xmax], "ylim":[ymin,ymax]}, "tf": {"xlim":[xmin,xmax], "ylim":[ymin,ymax]}}
     """
     if not args:
         raise ValueError('No inputs!')
@@ -20,6 +22,10 @@ def plot_simEEG(*args):
     elif len(args) == 3:
         EEG, chan, fignum = args
 
+    lims=None
+    if kwargs:
+        lims=kwargs["lims"]
+
     plt.figure(fignum, figsize=(16,10))
     plt.clf()
 
@@ -30,6 +36,11 @@ def plot_simEEG(*args):
     plt.xlabel('Time (s)')
     plt.ylabel('Activity')
     plt.title(f'ERP from channel {chan}')
+    if lims is not None and "erp" in lims.keys():
+        if "xlim" in lims["erp"]:
+            plt.xlim(lims["erp"]["xlim"])
+        if "ylim" in lims["erp"]:
+            plt.ylim(lims["erp"]["ylim"])          
 
     # static power spectrum
     hz = np.linspace(0, EEG.srate, EEG.pnts)
@@ -44,6 +55,11 @@ def plot_simEEG(*args):
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Power')
     plt.title('Static power spectrum')
+    if lims is not None and "power" in lims.keys():
+        if "xlim" in lims["power"]:
+            plt.xlim(lims["power"]["xlim"])
+        if "ylim" in lims["power"]:
+            plt.ylim(lims["power"]["ylim"])     
     
     # time-frequency analysis
     frex = np.linspace(2, 30, 40)  # frequencies in Hz (hard-coded to 2 to 30 in 40 steps)
@@ -79,10 +95,15 @@ def plot_simEEG(*args):
     plt.xlabel('Time')
     plt.ylabel('Frequency (Hz)')
     plt.title('Time-frequency plot')
+    if lims is not None and "tf" in lims.keys():
+        if "xlim" in lims["tf"]:
+            plt.xlim(lims["tf"]["xlim"])
+        if "ylim" in lims["tf"]:
+            plt.ylim(lims["tf"]["ylim"])    
 
     plt.show()
       
-def plot_simEEG_mne(*args):
+def plot_simEEG_mne(*args,**kwargs):
   """
   plot_simEEG - plot function for MXC's course on neural time series analysis
   """
@@ -96,6 +117,8 @@ def plot_simEEG_mne(*args):
       fignum = 0
   elif len(args) == 3:
       EEG, chan, fignum = args
+  if kwargs:
+    lims=kwargs["lims"]
 
   plt.figure(fignum, figsize=(16,10))
   plt.clf()
@@ -114,6 +137,11 @@ def plot_simEEG_mne(*args):
   plt.xlabel('Time (s)')
   plt.ylabel('Activity')
   plt.title(f'ERP from channel {chan}')
+  if lims is not None and "erp" in lims.keys():
+      if "xlim" in lims["erp"]:
+        plt.xlim(lims["erp"]["xlim"])
+      if "ylim" in lims["erp"]:
+        plt.ylim(lims["erp"]["ylim"]) 
 
   # static power spectrum
   hz = np.linspace(0, srate, pnts)
@@ -128,6 +156,11 @@ def plot_simEEG_mne(*args):
   plt.xlabel('Frequency (Hz)')
   plt.ylabel('Power')
   plt.title('Static power spectrum')
+  if lims is not None and "power" in lims.keys():
+      if "xlim" in lims["power"]:
+        plt.xlim(lims["power"]["xlim"])
+      if "ylim" in lims["power"]:
+        plt.ylim(lims["power"]["ylim"])   
 
   # time-frequency analysis
   frex = np.linspace(2, 30, 40)  # frequencies in Hz (hard-coded to 2 to 30 in 40 steps)
@@ -163,7 +196,11 @@ def plot_simEEG_mne(*args):
   plt.xlabel('Time')
   plt.ylabel('Frequency (Hz)')
   plt.title('Time-frequency plot')
-
+  if lims is not None and "tf" in lims.keys():
+      if "xlim" in lims["tf"]:
+        plt.xlim(lims["tf"]["xlim"])
+      if "ylim" in lims["tf"]:
+        plt.ylim(lims["tf"]["ylim"])    
   plt.show()
 
 def topoPlotIndie(eeg, values, title='Topoplot', vlim=(None, None), cmap='RdBu_r', contours=6):
